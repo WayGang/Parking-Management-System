@@ -1,0 +1,16 @@
+<div class="col-3 m-auto">
+    <img id="img_car" src="{{ car_img_path }}" class="img-responsive" style="max-width: 500px">
+</div>
+<div class="col-4 m-auto">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Car Info</h3>
+        </div>
+        <table class="table">
+            <tr><td>License Plate</td><td id="td_license_plate">{{ license_plate }}</td></tr>
+            <tr><td>Entry Time</td><td id="td_entry_time">{{ entry_time }}</td></tr>
+            <tr><td>Exit Time</td><td id="td_exit_time">{{ exit_time }}</td></tr>
+            <tr><td>Cost</td><td id="td_cost">{{ cost }}</td></tr>
+        </table>
+    </div>
+</div>

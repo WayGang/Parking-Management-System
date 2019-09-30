@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>License Plate Recognition</title>
+    {% load static %}
+    <link href="{% static 'car/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'car/css/fileinput.css' %}" media="all" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" crossorigin="anonymous">
+    <link href="{% static 'car/themes/explorer-fas/theme.css' %}" media="all" rel="stylesheet" type="text/css"/>
+    <script src="{% static 'car/js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'car/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'car/js/fileinput.js' %}" type="text/javascript"></script>
+    <script src="{% static 'car/js/locales/zh.js' %}" type="text/javascript"></script>
+    <script src="{% static 'car/themes/fas/theme.js' %}" type="text/javascript"></script>
+    <script src="{% static 'car/themes/explorer-fas/theme.js' %}" type="text/javascript"></script>
+    <style>
+        input:focus{
+            border: 1px solid red;
+        }
+    </style>
+    <script>
+        function input_key_down(event) {
+            if(event && event.keyCode === 13) {
+                $('#btn_query').click();
+            }
+        }
+
+        function query() {
+            var defer = $.Deferred();
+            $.ajax({
+                url: "/info/",
+                type: "get",
+                data: {'license_plate': $("#input_search").val()},
+                success: function (data) {
+                    defer.resolve(data);
+                }
+            });
+            return defer.promise();
+         }
+
+        $(function () {
+            $("#btn_query").click(function () {
+                $.when(query()).done(function (data) {
+                    if(data.error) {
+                        alert(data["msg"]);
+                    }
+                    else {
+                        $("#info").html(data);
+                        $("#info").show();
+                    }
+                });
+
+            });
+        });
+
+        $(function () {
+            $("#info").hide();
+            $("#btn_upload").click(function () {
+                window.location = '/upload_img/';
+            });
+        })
+    </script>
+</head>
+<body style="background: url('{% static 'car/img/webpage.jpg' %}')">
+    <div class='container'>
+        <form enctype="multipart/form-data">{% csrf_token %}
+            <div class="row">
+                <div class="col-4 m-auto">
+                    <div class="input-group">
+                        <input id="input_search" type="text" class="form-control" onkeydown="input_key_down(event)">
+                        <span class="input-group-btn">
+                            <button id="btn_query" class="btn btn-primary" type="button">
+                                Query
+                            </button>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-6 m-auto">
+                    <div class="file-loading">
+                        <input id="car_img" type="file">
+                    </div>
+                </div>
+            </div>
+            <div class="row" id="info" style="margin-top: 50px; "></div>
+        </form>
+    </div>
+</body>
+<script>
+    $('#car_img').fileinput({
+        theme: "fas",
+        uploadUrl: "{% url 'upload_img' %}",
+        maxFileCount: 1,
+        allowedFileExtensions: ["jpg", "png", "gif"]
+    });
+
+    $('#car_img').on("fileuploaded", function (event, data, previewId, index) {
+        if('success' in data.response) {
+            alert(data.response["msg"]);
+        }
+    });
+</script>
+</html>
